@@ -31,6 +31,7 @@ class DataLoader:
     def __init__(self, filepath: str | Path) -> None:
         self.filepath = Path(filepath)
         self._data: pd.DataFrame | None = None
+        self._duplicates_dropped: int = 0
 
 
     # Reads csv, parses dates, validates columns, and returns the raw DataFrame
@@ -69,7 +70,7 @@ class DataLoader:
                 data[COL_ORDER_DATE].max(),
             ),
             "missing_values": data.isnull().sum().to_dict(),
-            "duplicate_rows": int(data.duplicated().sum()),
+            "duplicate_rows_dropped": self._duplicates_dropped,
         }
 
 
@@ -100,13 +101,13 @@ class DataLoader:
 
     # remove duplicate rows and log how many were removed
     def _drop_duplicates(self) -> None:
-        """Remove fully-duplicate rows in place and log how many were dropped."""
-        data = self._require_loaded()
-        before = len(data)
-        data.drop_duplicates(inplace=True)
-        dropped = before - len(data)
-        if dropped:
-            logger.warning("Dropped %d duplicate row(s).", dropped)
+        if self._data is None:
+            raise RuntimeError("Call load() before dropping duplicates.")
+        before = len(self._data)
+        self._data.drop_duplicates(inplace=True, ignore_index=True)
+        self._duplicates_dropped = before - len(self._data)
+        if self._duplicates_dropped:
+            logger.warning("Dropped %d duplicate row(s).", self._duplicates_dropped)
 
     # ensure load() was called
     def _require_loaded(self) -> pd.DataFrame:

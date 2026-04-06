@@ -16,7 +16,7 @@ class TestMAE:
         assert mae([1, 2, 3], [1, 2, 3]) == pytest.approx(0.0)
 
     def test_known_value(self):
-        assert mae([10, 20, 30], [12, 18, 33]) == pytest.approx(10 / 3)
+        assert mae([10, 20, 30], [12, 18, 33]) == pytest.approx(7 / 3)
 
     def test_symmetric(self):
         assert mae([5, 10], [10, 5]) == pytest.approx(5.0)

@@ -120,7 +120,7 @@ class DataCleaner:
         available = len(series)
         if available < required:
             raise ValueError(
-                f"Series has {available} weeks but split requires {required}."
+                f"Series has {available} weeks but split requires {required} -> too short"
             )
 
         train = series.iloc[:train_weeks]

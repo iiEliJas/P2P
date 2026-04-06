@@ -1,8 +1,8 @@
-####################################################################
-# Evaluation metrics
+#
+#   Evaluation metrics
 #
 #   all functions accept array-like inputs (lists, Series, numpy arrays)
-#####################################################################
+#
 
 from __future__ import annotations
 

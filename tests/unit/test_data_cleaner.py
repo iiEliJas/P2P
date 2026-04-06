@@ -63,12 +63,14 @@ class TestOutlierRemoval:
         series = cleaner.get_cleaned_series()
 
         # add a outlier directly
-        cleaner._series.iloc[0] = 1_000_000
+        cleaner._series.iloc[0] = 1000000
         result = cleaner.remove_outliers()
 
-        q3 = series.quantile(0.75)
-        iqr = q3 - series.quantile(0.25)
-        upper = q3 + 1.5 * iqr
+        assert result.max() < 1000000
+
+        q1 = result.quantile(0.25)
+        q3 = result.quantile(0.75)
+        upper = q3 + 1.5 * (q3 - q1)
         assert result.max() <= upper + 1  # small tolerance
 
     def test_unknown_method_raises(self, cleaner):

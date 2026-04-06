@@ -189,7 +189,7 @@ def plot_forecast_comparison( actual: pd.Series, forecast: pd.Series, title: str
 
 ##################################################################
 #           ACF / PACF
-# ---------------------------------------------------------------------------
+#
 
 #
 # ACF and PACF charts
