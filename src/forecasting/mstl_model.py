@@ -83,7 +83,7 @@ class MSTLModel(BaseForecastingModel):
         windows = [_odd(max(self.trend_window, p + 1)) for p in self.seasonal_periods]
 
         logger.info(
-            "Fitting MSTL (seasonal_periods=%s, trend_window=%d) on %d obs ...",
+            "Fitting MSTL (seasonal_periods=%s, trend_window=%s) on %d obs ...",
             self.seasonal_periods,
             windows,
             len(train_data),

@@ -1,49 +1,47 @@
-# =============================================================================
-# Phase 1 Configuration — EDA + MSTL Baseline
-# =============================================================================
-# All runtime parameters for Phase 1.
-# src/config.py holds the canonical Python constants; this file is the
-# human-readable reference and is read by run_phase1.py at runtime.
-# =============================================================================
+#
+# Phase 1 Configuration
+#
+# All parameters for Phase 1.
+#
 
-# -----------------------------------------------------------------------------
+######################################################
 # Data
-# -----------------------------------------------------------------------------
+#
 data:
   filename: "DataCoSupplyChainDataset.csv"
   encoding: "latin-1"
-  frequency: "W"                    # pandas resample alias (W = weekly)
+  frequency: "W"  # W for weekly
 
   columns:
     order_date: "order date (DateOrders)"
     quantity:   "Order Item Quantity"
     ship_date:  "shipping date (DateOrders)"
 
-# -----------------------------------------------------------------------------
-# Train / test split
-# -----------------------------------------------------------------------------
+#####################################################
+# Train and test split
+#
 split:
   train_weeks: 158
   test_weeks:  4
 
-# -----------------------------------------------------------------------------
+#####################################################
 # Cleaning
-# -----------------------------------------------------------------------------
+#
 cleaning:
-  outlier_method: "iqr"             # only "iqr" supported in Phase 1
+  outlier_method: "iqr" 
 
-# -----------------------------------------------------------------------------
-# Forecasting — MSTL
-# -----------------------------------------------------------------------------
+######################################################
+# Forecasting
+#
 forecasting:
-  horizon:          4               # weeks ahead to forecast
-  lookback:         8               # context window (ETS trend model)
-  seasonal_periods: [52, 4]         # yearly (52 w) + quarterly (4 w)
-  trend_window:     35              # loess window (must be odd)
+  horizon:          4               # weeks to forecast
+  lookback:         8               # context window
+  seasonal_periods: [52, 4]         # year + quarter
+  trend_window:     35              # loess window
 
-# -----------------------------------------------------------------------------
+######################################################
 # Outputs
-# -----------------------------------------------------------------------------
+#
 outputs:
   save_forecast_csv:  true          # write forecasts/phase1_forecast.csv
   save_metrics_json:  true          # write forecasts/phase1_metrics.json

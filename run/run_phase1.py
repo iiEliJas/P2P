@@ -1,24 +1,11 @@
-"""
-run_phase1.py — Execute the complete Phase 1 pipeline from the command line.
-
-Usage
------
-    python scripts/run_phase1.py                        # uses default config
-    python scripts/run_phase1.py --config configs/phase1_config.yaml
-    python scripts/run_phase1.py --data data/raw/DataCoSupplyChainDataset.csv
-
-Steps
------
-    1. Load & validate raw DataCo CSV
-    2. Aggregate → weekly demand series
-    3. Handle missing values + remove outliers
-    4. Run EDA (trend, seasonality, distribution)
-    5. Save all EDA charts
-    6. Train MSTL model
-    7. Forecast 4 weeks ahead
-    8. Evaluate against hold-out test set
-    9. Save forecast CSV + metrics JSON
-"""
+#
+# Runs phase 1
+#
+# Usage
+#    python scripts/run_phase1.py
+#    python scripts/run_phase1.py --config other_config.yaml
+#    python scripts/run_phase1.py --data other_data.csv
+#
 
 from __future__ import annotations
 
@@ -31,9 +18,7 @@ from pathlib import Path
 import pandas as pd
 import yaml
 
-# ---------------------------------------------------------------------------
-# Make sure src/ is importable when running as a script from project root
-# ---------------------------------------------------------------------------
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -48,9 +33,8 @@ from src.utils.data_cleaner import DataCleaner
 from src.utils.data_loader import DataLoader
 from src.utils.visualization import plot_forecast_comparison
 
-# ---------------------------------------------------------------------------
-# Logging
-# ---------------------------------------------------------------------------
+
+# Logging setup
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  %(levelname)-8s  %(name)s — %(message)s",
@@ -59,9 +43,10 @@ logging.basicConfig(
 logger = logging.getLogger("run_phase1")
 
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
+
+#####################################################
+#           Helpers
+#
 
 def _load_config(path: str | Path) -> dict:
     with open(path) as f:
@@ -69,14 +54,16 @@ def _load_config(path: str | Path) -> dict:
 
 
 def _separator(title: str) -> None:
+    logger.info("\n\n")
     logger.info("=" * 60)
     logger.info("  %s", title)
     logger.info("=" * 60)
 
 
-# ---------------------------------------------------------------------------
-# Main pipeline
-# ---------------------------------------------------------------------------
+
+#####################################################
+#           Main pipeline
+#
 
 def run(data_path: Path, config: dict) -> None:
 
@@ -84,10 +71,10 @@ def run(data_path: Path, config: dict) -> None:
     fc_cfg    = config["forecasting"]
     out_cfg   = config["outputs"]
 
-    # ------------------------------------------------------------------
-    # 1. Load
-    # ------------------------------------------------------------------
-    _separator("STEP 1 — Load data")
+    #################################
+    # Load data
+    #
+    _separator("STEP 1 Load data")
     loader = DataLoader(data_path)
     raw_df = loader.load()
     summary = loader.get_summary()
@@ -95,10 +82,10 @@ def run(data_path: Path, config: dict) -> None:
     logger.info("Date range     : %s → %s", *summary["date_range"])
     logger.info("Dupes dropped  : %d", summary["duplicate_rows_dropped"])
 
-    # ------------------------------------------------------------------
-    # 2–3. Clean
-    # ------------------------------------------------------------------
-    _separator("STEP 2 — Clean & aggregate")
+    #################################
+    # Clean data
+    #
+    _separator("STEP 2 Clean data")
     cleaner = DataCleaner(raw_df, frequency=config["data"]["frequency"])
     cleaner.aggregate_by_frequency()
     cleaner.handle_missing_values()
@@ -109,10 +96,10 @@ def run(data_path: Path, config: dict) -> None:
     )
     logger.info("Train: %d weeks  |  Test: %d weeks", len(train), len(test))
 
-    # ------------------------------------------------------------------
-    # 4–5. EDA
-    # ------------------------------------------------------------------
-    _separator("STEP 3 — Exploratory Data Analysis")
+    #################################
+    # EDA
+    #
+    _separator("STEP 3 EDA")
     eda = ExploratoryAnalysis(cleaner.get_cleaned_series())
 
     trend_info  = eda.analyze_trends()
@@ -131,10 +118,10 @@ def run(data_path: Path, config: dict) -> None:
         eda.plot_all_eda_charts()
         logger.info("EDA charts saved to results/visualizations/")
 
-    # ------------------------------------------------------------------
-    # 6–7. MSTL forecast
-    # ------------------------------------------------------------------
-    _separator("STEP 4 — MSTL Forecast")
+    #################################
+    # MSTL forecast
+    #
+    _separator("STEP 4 MSTL Forecast")
     model = MSTLModel(
         horizon=fc_cfg["horizon"],
         lookback=fc_cfg["lookback"],
@@ -145,19 +132,19 @@ def run(data_path: Path, config: dict) -> None:
     forecast = model.predict()
     logger.info("Forecast values  : %s", forecast.round(1).tolist())
 
-    # ------------------------------------------------------------------
-    # 8. Evaluate
-    # ------------------------------------------------------------------
-    _separator("STEP 5 — Evaluation")
+    #################################
+    # Evaluate
+    #
+    _separator("STEP 5 Evaluation")
     metrics = model.evaluate(test, forecast)
     logger.info("MAE    : %.2f",   metrics["mae"])
     logger.info("RMSE   : %.2f",   metrics["rmse"])
     logger.info("sMAPE  : %.2f%%", metrics["smape"])
 
-    # ------------------------------------------------------------------
-    # 9. Save outputs
-    # ------------------------------------------------------------------
-    _separator("STEP 6 — Save outputs")
+    #################################
+    # Save outputs
+    #
+    _separator("STEP 6 Save outputs")
 
     if out_cfg["save_forecast_csv"]:
         forecast_df = pd.DataFrame({
@@ -183,16 +170,16 @@ def run(data_path: Path, config: dict) -> None:
             filename="phase1_forecast_vs_actual",
             train=train,
         )
-        logger.info("Forecast chart   → results/visualizations/phase1_forecast_vs_actual.html")
+        logger.info("Forecast chart saved to results/visualizations/phase1_forecast_vs_actual.html")
 
     _separator("PHASE 1 COMPLETE")
     logger.info("MAE=%.2f | RMSE=%.2f | sMAPE=%.2f%%",
                 metrics["mae"], metrics["rmse"], metrics["smape"])
 
 
-# ---------------------------------------------------------------------------
+######################################################
 # CLI
-# ---------------------------------------------------------------------------
+#
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
