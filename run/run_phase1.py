@@ -2,9 +2,9 @@
 # Runs phase 1
 #
 # Usage
-#    python scripts/run_phase1.py
-#    python scripts/run_phase1.py --config other_config.yaml
-#    python scripts/run_phase1.py --data other_data.csv
+#    python run/run_phase1.py
+#    python run/run_phase1.py --config other_config.yaml
+#    python run/run_phase1.py --data other_data.csv
 #
 
 from __future__ import annotations
@@ -166,7 +166,7 @@ def run(data_path: Path, config: dict) -> None:
         plot_forecast_comparison(
             actual=test,
             forecast=forecast,
-            title="MSTL Forecast vs Actual — Phase 1",
+            title="MSTL Forecast vs Actual",
             filename="phase1_forecast_vs_actual",
             train=train,
         )
