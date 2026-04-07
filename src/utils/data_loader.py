@@ -53,6 +53,7 @@ class DataLoader:
         self._parse_dates()
         self._validate()
         self._drop_duplicates()
+        self._sort_by_date()
 
         return self._data
 
@@ -108,6 +109,21 @@ class DataLoader:
         self._duplicates_dropped = before - len(self._data)
         if self._duplicates_dropped:
             logger.warning("Dropped %d duplicate row(s).", self._duplicates_dropped)
+
+     # sort by date
+    def _sort_by_date(self) -> None:
+        if self._data is None:
+            raise RuntimeError("Call load() before sorting.")
+        
+        if COL_ORDER_DATE not in self._data.columns:
+            raise ValueError(f"Column {COL_ORDER_DATE} not found for sorting.")
+        
+        self._data.sort_values(by=COL_ORDER_DATE, inplace=True, ignore_index=True)
+        logger.info(
+            "Data sorted chronologically: %s → %s",
+            self._data[COL_ORDER_DATE].iloc[0],
+            self._data[COL_ORDER_DATE].iloc[-1],
+        )
 
     # ensure load() was called
     def _require_loaded(self) -> pd.DataFrame:
