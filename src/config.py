@@ -19,7 +19,7 @@ for _dir in [DATA_PROCESSED, MODELS_DIR, FIGURES_DIR, FORECASTS_DIR]:
 # ---------------------------------------------------------------------------
 # Dataset
 #
-DATAFILE = "DataCo_Supply_Chain_Data.csv"
+DATAFILE = "DataCoSupplyChainDataset.csv"
 DATAFILE_ENCODING = "latin-1"
 
 # column names must be like in the csv file

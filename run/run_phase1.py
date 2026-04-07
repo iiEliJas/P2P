@@ -78,6 +78,13 @@ def run(data_path: Path, config: dict) -> None:
     loader = DataLoader(data_path)
     raw_df = loader.load()
     summary = loader.get_summary()
+    
+    print("\n RAW DATA DEBUG:")
+    print(f"First 5 dates:\n{raw_df[COL_ORDER_DATE].head()}")
+    print(f"Last 5 dates:\n{raw_df[COL_ORDER_DATE].tail()}")
+    print(f"Date range: {raw_df[COL_ORDER_DATE].min()} → {raw_df[COL_ORDER_DATE].max()}")
+    print(f"Data in 2018: {(raw_df[COL_ORDER_DATE].dt.year == 2018).sum()} rows")
+    
     logger.info("Shape          : %s", summary["shape"])
     logger.info("Date range     : %s → %s", *summary["date_range"])
     logger.info("Dupes dropped  : %d", summary["duplicate_rows_dropped"])

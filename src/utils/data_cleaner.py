@@ -123,11 +123,11 @@ class DataCleaner:
                 f"Series has {available} weeks but split requires {required} -> too short"
             )
 
-        train = series.iloc[:train_weeks]
-        test = series.iloc[train_weeks : train_weeks + test_weeks]
+        train = series.iloc[:-test_weeks]
+        test = series.iloc[-test_weeks:]
 
         logger.info(
-            "Train/test split — train: %d weeks (%s → %s), test: %d weeks (%s → %s).",
+            "Train/test split — train: %d weeks (%s - %s), test: %d weeks (%s - %s).",
             len(train),
             train.index[0].date(),
             train.index[-1].date(),
