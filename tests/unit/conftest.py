@@ -33,14 +33,12 @@ def weekly_demand(weekly_dates) -> pd.Series:
 
 @pytest.fixture
 def train_series(weekly_demand) -> pd.Series:
-    # first 158 weeks for training
-    return weekly_demand.iloc[:158]
+    return weekly_demand.iloc[:134]
 
 
 @pytest.fixture
 def test_series(weekly_demand) -> pd.Series:
-    # last 4 weeks for testing
-    return weekly_demand.iloc[158:162]
+    return weekly_demand.iloc[134:142]
 
 
 

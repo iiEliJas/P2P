@@ -33,18 +33,18 @@ COL_SHIP_DATE = "shipping date (DateOrders)"
 # Data split
 # 
 FREQUENCY = "W"
-TRAIN_WEEKS = 158
-TEST_WEEKS = 4
+TRAIN_WEEKS = 134
+TEST_WEEKS = 8
 
 
 
 # ---------------------------------------------------------------------------
 # Forecasting
 # 
-FORECAST_HORIZON = 4
+FORECAST_HORIZON = 8
 LOOKBACK_WINDOW = 8
 
-MSTL_SEASONAL_PERIODS = [52, 4]
+MSTL_SEASONAL_PERIODS = [52, 13]
 MSTL_TREND_WINDOW = 35
 
 

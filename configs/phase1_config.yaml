@@ -11,6 +11,7 @@ data:
   filename: "DataCoSupplyChainDataset.csv"
   encoding: "latin-1"
   frequency: "W"  # W for weekly
+  drop_last_weeks: 20 # drop everything after october 2017 to ensure a clean dataset
 
   columns:
     order_date: "order date (DateOrders)"
@@ -21,8 +22,8 @@ data:
 # Train and test split
 #
 split:
-  train_weeks: 158
-  test_weeks:  4
+  train_weeks: 134
+  test_weeks: 8
 
 #####################################################
 # Cleaning
@@ -34,9 +35,9 @@ cleaning:
 # Forecasting
 #
 forecasting:
-  horizon:          4               # weeks to forecast
+  horizon:          8               # weeks to forecast
   lookback:         8               # context window
-  seasonal_periods: [52, 4]         # year + quarter
+  seasonal_periods: [52, 13]         # year + quarter
   trend_window:     35              # loess window
 
 ######################################################

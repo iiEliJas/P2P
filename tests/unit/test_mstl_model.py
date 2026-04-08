@@ -13,7 +13,7 @@ from src.forecasting.mstl_model import MSTLModel
 
 @pytest.fixture
 def fitted_model(train_series) -> MSTLModel:
-    model = MSTLModel(horizon=4, seasonal_periods=[52, 4])
+    model = MSTLModel(horizon=8, seasonal_periods=[52, 13])
     model.fit(train_series)
     return model
 
@@ -38,7 +38,7 @@ class TestMSTLPredict:
         assert isinstance(forecast, pd.Series)
 
     def test_forecast_length_matches_horizon(self, fitted_model):
-        horizon = 4
+        horizon = 8
         fitted_model.horizon = horizon
         forecast = fitted_model.predict()
         assert len(forecast) == horizon
@@ -56,7 +56,6 @@ class TestMSTLPredict:
         assert forecast.index.min() > train_series.index.max()
 
     def test_forecast_no_negatives(self, fitted_model):
-        """Demand forecasts should not be negative."""
         forecast = fitted_model.predict()
         assert (forecast.values >= 0).all()
 

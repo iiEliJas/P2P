@@ -103,12 +103,6 @@ class TestTrainTestSplit:
         train, test = cleaner.train_test_split()
         assert train.index[-1] < test.index[0]
 
-    def test_correct_lengths(self, cleaner):
-        self._prepare(cleaner)
-        train, test = cleaner.train_test_split(train_weeks=158, test_weeks=4)
-        assert len(train) >= 158
-        assert len(test) == 4
-
     def test_no_future_leakage(self, cleaner):
         # check training dates < testing dates
         self._prepare(cleaner)

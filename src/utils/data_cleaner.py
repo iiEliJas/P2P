@@ -29,9 +29,10 @@ logger = logging.getLogger(__name__)
 #
 class DataCleaner:
 
-    def __init__(self, data: pd.DataFrame, frequency: str = FREQUENCY) -> None:
+    def __init__(self, data: pd.DataFrame, frequency: str = FREQUENCY, drop_last_weeks: int = 0) -> None:
         self.frequency = frequency
         self._raw = data.copy()
+        self.drop_last_weeks = drop_last_weeks
         self._series: pd.Series | None = None
 
 
@@ -60,6 +61,11 @@ class DataCleaner:
             weekly.index[0].year,
             weekly.index[-1].year,
         )
+
+        if self.drop_last_weeks > 0:
+            weekly = weekly.iloc[:-self.drop_last_weeks]
+            logger.info("Trimmed %d incomplete tail week(s).", self.drop_last_weeks)
+
         self._series = weekly
         return self._series.copy()
 
@@ -82,25 +88,19 @@ class DataCleaner:
         return self._series.copy()
 
 
-    # Remove outliers using the specified method (default is IQR)
+    # Remove outliers using the specified method
     def remove_outliers(self, method: str = "iqr") -> pd.Series:
         series = self._require_aggregated()
 
         if method == "iqr":
-            q1 = series.quantile(0.25)
-            q3 = series.quantile(0.75)
+            q1, q3 = series.quantile(0.25), series.quantile(0.75)
             iqr = q3 - q1
-            lower = q1 - 1.5 * iqr
             upper = q3 + 1.5 * iqr
 
-            outliers = ((series < lower) | (series > upper)).sum()
-            self._series = series.clip(lower=max(lower, 0), upper=upper)
-            logger.info(
-                "IQR outlier removal: %d value(s) clipped [%.1f, %.1f].",
-                outliers,
-                lower,
-                upper,
-            )
+            # Only clip upward spikes — never clip low values upward
+            n_clipped = (series > upper).sum()
+            self._series = series.clip(upper=upper)
+            logger.info("IQR outlier removal: %d upper spikes clipped to %.1f.", n_clipped, upper)
         else:
             raise ValueError(f"Unknown outlier method: '{method}'. Use 'iqr'.")
 
@@ -123,8 +123,8 @@ class DataCleaner:
                 f"Series has {available} weeks but split requires {required} -> too short"
             )
 
-        train = series.iloc[:-test_weeks]
-        test = series.iloc[-test_weeks:]
+        train = series.iloc[:train_weeks]
+        test = series.iloc[train_weeks:train_weeks + test_weeks]
 
         logger.info(
             "Train/test split — train: %d weeks (%s - %s), test: %d weeks (%s - %s).",

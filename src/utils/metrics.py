@@ -19,7 +19,6 @@ ArrayLike = Sequence[float] | np.ndarray
 # Convert inputs to float64 numpy arrays and validate shapes
 #
 def _to_arrays(actual: ArrayLike, predicted: ArrayLike) -> tuple[np.ndarray, np.ndarray]:
-    """Convert inputs to float64 numpy arrays and validate shapes."""
     a = np.asarray(actual, dtype=np.float64)
     p = np.asarray(predicted, dtype=np.float64)
     if a.shape != p.shape:
