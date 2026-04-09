@@ -34,8 +34,9 @@ setup(
             "ipywidgets>=8.0.7",
         ],
         "ml": [
-            "torch>=2.0.0",
-            "neuralforecast>=1.6.0",
+            "torch>=1.13.0",
+            "pytorch-lightning>=1.8.0",
+            "pytorch-forecasting>=0.10.3"
         ],
     },
 )

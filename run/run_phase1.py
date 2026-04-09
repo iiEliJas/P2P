@@ -38,7 +38,7 @@ from src.utils.visualization import plot_forecast_comparison
 # Logging setup
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s  %(levelname)-8s  %(name)s — %(message)s",
+    format="%(asctime)s  %(levelname)-8s  %(name)s - %(message)s",
     datefmt="%H:%M:%S",
 )
 logger = logging.getLogger("run_phase1")
@@ -72,6 +72,8 @@ def run(data_path: Path, config: dict) -> None:
     fc_cfg    = config["forecasting"]
     out_cfg   = config["outputs"]
 
+    _separator("PHASE 1")
+    
     #################################
     # Load data
     #
@@ -83,6 +85,8 @@ def run(data_path: Path, config: dict) -> None:
     logger.info("Shape          : %s", summary["shape"])
     logger.info("Date range     : %s → %s", *summary["date_range"])
     logger.info("Dupes dropped  : %d", summary["duplicate_rows_dropped"])
+
+
 
     #################################
     # Clean data
@@ -97,6 +101,8 @@ def run(data_path: Path, config: dict) -> None:
         test_weeks=split_cfg["test_weeks"],
     )
     logger.info("Train: %d weeks  |  Test: %d weeks", len(train), len(test))
+
+
 
     #################################
     # EDA
@@ -120,6 +126,8 @@ def run(data_path: Path, config: dict) -> None:
         eda.plot_all_eda_charts()
         logger.info("EDA charts saved to results/visualizations/")
 
+
+
     #################################
     # MSTL forecast
     #
@@ -134,6 +142,8 @@ def run(data_path: Path, config: dict) -> None:
     forecast = model.predict()
     logger.info("Forecast values  : %s", forecast.round(1).tolist())
 
+
+
     #################################
     # Evaluate
     #
@@ -142,6 +152,8 @@ def run(data_path: Path, config: dict) -> None:
     logger.info("MAE    : %.2f",   metrics["mae"])
     logger.info("RMSE   : %.2f",   metrics["rmse"])
     logger.info("sMAPE  : %.2f%%", metrics["smape"])
+
+
 
     #################################
     # Save outputs
