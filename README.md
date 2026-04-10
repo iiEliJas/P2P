@@ -15,6 +15,12 @@ This framework implements the research from:
 
 ## Key Results
 
+![Monthly Distribution](results/visualizations/month_disb.png)
+*Monthly distributions of DataCo supply chain dataset*
+
+![Seasonal Decomposition](results/visualizations/decomposition.png)
+*Seasonal decomposition*
+
 ### Phase 2: Demand Forecasting Comparison
  
 | Rank | Model | SMAPE | MAE | RMSE |
@@ -24,6 +30,9 @@ This framework implements the research from:
 | 3 | MSTL | 5.49% | 139.77 | 175.41 |
  
 Baseline and N-BEATS have almost the same SMAPE, but N-BEATS has 17% lower RMSE, which makes it better for production.
+
+![Forecast comparison](results/visualizations/forecast_comp.png)
+*Comparison of all forecasts with actual values*
  
 ### Phase 3: Shipping Optimization
  
@@ -33,6 +42,9 @@ Baseline and N-BEATS have almost the same SMAPE, but N-BEATS has 17% lower RMSE,
 | Baseline | 63,587 | 3.17 | $21,729.0 | 108.33% | 4,000 | 19.97% | No |
  
 The ILP optimization produces feasible solutions that respect all constraints (budget, capacity, service level), while the baseline violates budget limits. Although the baseline achieves slightly better delivery times by ignoring constraints, the ILP solution provides a constraint-respecting allocation.
+
+![Shipping comparison](results/visualizations/shipping.png)
+*Shipping allocations of both ILP and baseline*
 
 ## Setup
 
@@ -98,7 +110,7 @@ There are also 3 notebooks demonstrating all phases in detail and step by step.
 Results are automatically generated in `results/`:
 
 ### Visualizations
-Visualizations will be placed here for showcase.
+Visualizations will be placed in `results/visualizations/`.
 
 ### Forecasts
 Forecast outputs saved in `results/forecasts/`
