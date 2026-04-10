@@ -21,10 +21,6 @@ jupyter==1.0.0
 ipython==8.14.0
 ipywidgets==8.0.7
  
-
-
-#----------------------
-# needed for phase 2 so not now
-#
-# torch==2.0.1
-# neuralforecast==1.6.1
+torch>=1.13.0
+pytorch-lightning>=1.8.0
+pytorch-forecasting>=0.10.3

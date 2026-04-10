@@ -21,23 +21,22 @@ def test_full_forecasting_pipeline(sample_series):
     train = sample_series[:140]
     test = sample_series[140:148]
 
-    # Initialize models
+    # Init
     models = {
         "Baseline": BaselineModel(horizon=8, lookback=8),
     }
 
-    # Train all models
+    # train all models
     trainers = {}
     for name, model in models.items():
         trainer = ModelTrainer(model, train, test)
         trainer.train()
         trainers[name] = trainer
 
-    # Evaluate all models
+    # evaluate all models
     evaluator = ModelEvaluator(models, test)
     results = evaluator.evaluate_all()
 
-    # Assertions
     assert len(results) == 1
     assert "smape" in results.columns
     assert "mae" in results.columns
@@ -51,7 +50,7 @@ def test_pipeline_model_comparison(sample_series):
     train = sample_series[:140]
     test = sample_series[140:148]
 
-    # Initialize models
+    # Init
     models = {
         "Baseline": BaselineModel(horizon=8, lookback=8),
     }
@@ -61,11 +60,11 @@ def test_pipeline_model_comparison(sample_series):
         trainer = ModelTrainer(model, train, test)
         trainer.train()
 
-    # Evaluate
+    # evaluate
     evaluator = ModelEvaluator(models, test)
     results = evaluator.evaluate_all()
 
-    # Test comparison methods
+    # test comparison methods
     best_model = evaluator.get_best_model()
     assert best_model is not None
     assert best_model in models.keys()

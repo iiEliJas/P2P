@@ -271,3 +271,147 @@ def plot_monthly_distribution( data: pd.Series, filename: str = "monthly_distrib
 
     _save(fig, filename)
     return fig
+
+
+
+##################################################################
+#           Optimization visualizations
+#
+ 
+#
+# bar chart of shipping allocation by mode
+#
+def plot_allocation_comparison(allocations: dict, shipping_modes: list, filename: str = "allocation_comparison") -> go.Figure:
+    fig = go.Figure()
+ 
+    for mode in shipping_modes:
+        values = [allocations.get(strategy, {}).get(mode, 0) for strategy in allocations.keys()]
+        fig.add_trace(
+            go.Bar(
+                name=mode,
+                x=list(allocations.keys()),
+                y=values,
+                text=values,
+                textposition="inside",
+            )
+        )
+ 
+    fig.update_layout(
+        barmode="stack",
+        title="Shipping Allocation by Mode and Strategy",
+        xaxis_title="Strategy",
+        yaxis_title="Units",
+        template=PLOTLY_TEMPLATE,
+        width=FIGURE_WIDTH,
+        height=FIGURE_HEIGHT,
+        legend=dict(orientation="v", yanchor="top", y=0.99),
+        hovermode="x unified",
+    )
+ 
+    _save(fig, filename)
+    return fig
+ 
+ 
+#
+# Comparison of delivery time metrics
+#
+def plot_delivery_time_comparison(comparison_df: pd.DataFrame, filename: str = "delivery_time_comparison") -> go.Figure:
+    df = comparison_df.copy()
+    df["Total Days"] = pd.to_numeric(df["Total Days"], errors="coerce")
+ 
+    fig = go.Figure()
+ 
+    fig.add_trace(
+        go.Bar(
+            x=df["Strategy"],
+            y=df["Total Days"],
+            marker_color=["#2ca02c" if s == "ILP Optimal" else "#d62728" for s in df["Strategy"]],
+            text=df["Total Days"],
+            textposition="auto",
+        )
+    )
+ 
+    fig.update_layout(
+        title="Total Delivery Days Comparison",
+        xaxis_title="Strategy",
+        yaxis_title="Total Delivery Days",
+        template=PLOTLY_TEMPLATE,
+        width=FIGURE_WIDTH,
+        height=FIGURE_HEIGHT,
+        showlegend=False,
+    )
+ 
+    _save(fig, filename)
+    return fig
+ 
+ 
+#
+# Cost breakdown pie chart
+#
+def plot_cost_breakdown(allocation: dict, costs: dict, filename: str = "cost_breakdown") -> go.Figure:
+    cost_by_mode = {mode: costs.get(mode, 0) * allocation.get(mode, 0) for mode in allocation.keys()}
+ 
+    fig = go.Figure(
+        data=[
+            go.Pie(
+                labels=list(cost_by_mode.keys()),
+                values=list(cost_by_mode.values()),
+                textposition="inside",
+                textinfo="label+percent",
+            )
+        ]
+    )
+ 
+    fig.update_layout(
+        title="Cost Breakdown by Shipping Mode (Optimal Allocation)",
+        template=PLOTLY_TEMPLATE,
+        width=FIGURE_WIDTH,
+        height=FIGURE_HEIGHT,
+    )
+ 
+    _save(fig, filename)
+    return fig
+ 
+ 
+#
+# Service level compliance visualization
+#
+def plot_service_level(comparison_df: pd.DataFrame, filename: str = "service_level_compliance") -> go.Figure:
+    df = comparison_df.copy()
+    df["Fast %"] = df["Fast %"].str.rstrip("%").astype(float)
+ 
+    fig = go.Figure()
+ 
+    colors = ["#2ca02c" if f >= 10.0 else "#d62728" for f in df["Fast %"]]
+ 
+    fig.add_trace(
+        go.Bar(
+            x=df["Strategy"],
+            y=df["Fast %"],
+            marker_color=colors,
+            text=[f"{v:.1f}%" for v in df["Fast %"]],
+            textposition="auto",
+        )
+    )
+ 
+    fig.add_hline(
+        y=10.0,
+        line_dash="dash",
+        line_color="gray",
+        annotation_text="Target: 10%",
+        annotation_position="right",
+    )
+ 
+    fig.update_layout(
+        title="Service Level Compliance (Fast Shipping %)",
+        xaxis_title="Strategy",
+        yaxis_title="Fast Shipping %",
+        template=PLOTLY_TEMPLATE,
+        width=FIGURE_WIDTH,
+        height=FIGURE_HEIGHT,
+        showlegend=False,
+    )
+ 
+    _save(fig, filename)
+    return fig
+ 
