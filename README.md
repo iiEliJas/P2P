@@ -15,7 +15,24 @@ This framework implements the research from:
 
 ## Key Results
 
-// not finished
+### Phase 2: Demand Forecasting Comparison
+ 
+| Rank | Model | SMAPE | MAE | RMSE |
+|------|-------|-------|-----|------|
+| 1 | Baseline | 2.69% | 67.52 | 94.83 |
+| 2 | N-BEATS | 2.70% | 67.48 | 78.16 |
+| 3 | MSTL | 5.49% | 139.77 | 175.41 |
+ 
+Baseline and N-BEATS have almost the same SMAPE, but N-BEATS has 17% lower RMSE, which makes it better for production.
+ 
+### Phase 3: Shipping Optimization
+ 
+| Strategy | Total Days | Avg Days/Unit | Total Cost | Budget Used | Fast Units | Fast % | Feasible |
+|----------|-----------|--------------|-----------|------------|-----------|--------|----------|
+| ILP Optimal | 65,261 | 3.26 | $20,057.7 | 100.0% | 2,785 | 13.9% | Yes |
+| Baseline | 63,587 | 3.17 | $21,729.0 | 108.33% | 4,000 | 19.97% | No |
+ 
+The ILP optimization produces feasible solutions that respect all constraints (budget, capacity, service level), while the baseline violates budget limits. Although the baseline achieves slightly better delivery times by ignoring constraints, the ILP solution provides a constraint-respecting allocation.
 
 ## Setup
 

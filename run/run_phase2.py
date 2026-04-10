@@ -107,11 +107,11 @@ def main():
             'N-BEATS': NBeatsModel(
                 horizon=FORECAST_HORIZON,
                 lookback=LOOKBACK_WINDOW,
-                epochs=100,
+                epochs=50,
                 batch_size=32,
-                hidden_size=128,
-                num_stacks=30,
-                num_blocks=3,
+                hidden_size=64,
+                num_stacks=15,
+                num_blocks=2,
             )
         }
         for name in models.keys():

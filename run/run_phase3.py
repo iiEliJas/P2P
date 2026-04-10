@@ -105,11 +105,12 @@ def main():
     try:
         nbeats = NBeatsModel(
             horizon=FORECAST_HORIZON,
-            lookback=8,
+            lookback=16,
             epochs=50,
             batch_size=32,
-            hidden_size=128,
-            num_stacks=30,
+            hidden_size=64,
+            num_stacks=15,
+            num_blocks=2,
         )
         trainer = ModelTrainer(nbeats, train, test)
         metrics = trainer.train()
